@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
 namespace ConsoleApplication
@@ -49,8 +50,8 @@ namespace ConsoleApplication
             }
             if (!string.IsNullOrEmpty(inputFolder) && !string.IsNullOrWhiteSpace(inputFolder))
             {
-                if (string.IsNullOrEmpty(outputFolder) 
-                || string.IsNullOrWhiteSpace(outputFolder) 
+                if (string.IsNullOrEmpty(outputFolder)
+                || string.IsNullOrWhiteSpace(outputFolder)
                 || !Directory.Exists(outputFolder))
                 {
                     int n = 1;
@@ -233,6 +234,7 @@ Common Arguments:
                 File.WriteAllText(FilePath, text);
             }
         }
+
         public static void ConvertCSS(string dirPath)
         {
             string[] filespaths = Directory.GetFiles(dirPath);
@@ -246,11 +248,19 @@ Common Arguments:
                 || x.ToLower().EndsWith(".styl"));
             if (files.Count() == 0)
                 return;
+            Regex rgx = new Regex("(html\\s+{)|(html{)");
             foreach (string FilePath in files)
             {
                 string text = File.ReadAllText(FilePath);
                 text = TextDirflip(text);
-                text = "* {     direction: rtl;} " + text;
+                string text1 = rgx.Replace(text, "html{direction:rtl;");
+                if (text == text1)
+                {
+                    text = text + "html{direction: rtl;}";
+                } else
+                {
+                    text = text1;
+                }
                 File.WriteAllText(FilePath, text);
             }
         }
