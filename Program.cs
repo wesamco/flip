@@ -58,7 +58,7 @@ namespace ConsoleApplication
                     outputFolder = $"{inputFolder} {n}";
                     while (Directory.Exists(outputFolder))
                     {
-                        outputFolder = $"{outputFolder} {n}";
+                        outputFolder = $"{outputFolder.Split(' ')[0]} {n}";
                         n++;
                     }
                     Directory.CreateDirectory(outputFolder);
@@ -88,7 +88,6 @@ Common Arguments:
                     "Source directory does not exist or could not be found: "
                     + sourceDirName);
             }
-
             DirectoryInfo[] dirs = dir.GetDirectories();
             if (!Directory.Exists(destDirName))
             {
@@ -111,9 +110,7 @@ Common Arguments:
         }
         private static void Convert(string sourceDirName)
         {
-            // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-
             if (!dir.Exists)
             {
                 throw new DirectoryNotFoundException(
@@ -138,23 +135,14 @@ Common Arguments:
                 .Where(x => x.ToLower().EndsWith(".html")
                 || x.ToLower().EndsWith(".htm")
                 || x.ToLower().EndsWith(".cshtml")
+                || x.ToLower().EndsWith(".asp")
                 || x.ToLower().EndsWith(".jsp")
-                || x.ToLower().EndsWith(".php")
-                || x.ToLower().EndsWith(".phtml")
-                || x.ToLower().EndsWith(".php3")
-                || x.ToLower().EndsWith(".php4")
-                || x.ToLower().EndsWith(".php5")
-
-                || x.ToLower().EndsWith(".phps")
-                || x.ToLower().EndsWith(".Phtml")
                 || x.ToLower().EndsWith(".SHTML")
                 || x.ToLower().EndsWith(".xhtml")
                 || x.ToLower().EndsWith(".xht")
                 || x.ToLower().EndsWith(".xml")
                 || x.ToLower().EndsWith(".xhtml")
-                || x.ToLower().EndsWith(".xhtml")
-                || x.ToLower().EndsWith(".cshtml")
-                || x.ToLower().EndsWith(".asp"));
+                || x.ToLower().EndsWith(".xhtml"));
             if (files.Count() == 0)
                 return;
             foreach (string FilePath in files)
@@ -206,10 +194,6 @@ Common Arguments:
                 node.Attributes[i].Value = TextDirflip(node.Attributes[i].Value.ToString());
             }
             var childs = node.ChildNodes.ToList();
-            //if (childs.Count > 0)
-            //{
-
-            //}
             var filtered = childs
                 .Where(n => n.ParentNode.Name != "script" && n.ParentNode.Name != "style" && n.ParentNode.Name != "#comment" && n.ParentNode.Name != "meta" /*&& n.Name != "#text"*/).ToList();
             int ii = filtered.Count;
